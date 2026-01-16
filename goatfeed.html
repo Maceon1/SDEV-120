@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cattle Feed Blend Calculator</title>
+  <title>Goat Feed Blend Calculator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #000000;
+      background: #f4f7f5;
       padding: 20px;
       line-height: 1.6;
     }
     h1, h2 {
-      color: #245346;
+      color: #5a4b2e;
     }
     .container {
       max-width: 800px;
@@ -36,7 +36,7 @@
       margin-top: 20px;
       padding: 12px;
       width: 100%;
-      background: #235849;
+      background: #5a4b2e;
       color: white;
       border: none;
       font-size: 16px;
@@ -44,12 +44,12 @@
       cursor: pointer;
     }
     button:hover {
-      background: #24483f;
+      background: #4a3e26;
     }
     .results {
       margin-top: 30px;
       padding: 15px;
-      background: #eef5f2;
+      background: #f5f1e8;
       border-radius: 5px;
     }
     .note {
@@ -57,30 +57,35 @@
       color: #555;
       margin-top: 10px;
     }
-    a {
-        padding-left: 10px;
+    .nav-link {
+      display: inline-block;
+      margin-bottom: 15px;
+      text-decoration: none;
+      color: #5a4b2e;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-    <div class="navigation">
-        <a href="index.html">Home</a>
-        <a href="cattlefeed.html">Cattle Feed Calculator</a>
-        <a href="goatfeed.html">Goat Feed Calculator</a>
+  <div class="navigation">
+    <a href="index.html">Home</a>
+    <a href="cattlefeed.html">Cattle Feed Calculator</a>
+    <a href="goatfeed.html">Goat Feed Calculator</a>
     </div>
   <div class="container">
     <a class="nav-link" href="index.html">← Back to Home</a>
-    <h1>Cattle Feed Blend Calculator</h1>
-    <p>This prototype estimates a basic daily feed blend for cattle. Values are simplified for educational use.</p>
 
-    <label for="cattleType">Cattle Type</label>
-    <select id="cattleType">
-      <option value="beef">Beef Cattle</option>
-      <option value="dairy">Dairy Cattle</option>
+    <h1>Goat Feed Blend Calculator</h1>
+    <p>This prototype estimates a basic daily feed blend for goats. Values are simplified for educational use.</p>
+
+    <label for="goatType">Goat Type</label>
+    <select id="goatType">
+      <option value="meat">Meat Goat</option>
+      <option value="dairy">Dairy Goat</option>
     </select>
 
     <label for="weight">Average Weight (lbs)</label>
-    <input type="number" id="weight" placeholder="e.g. 1200" />
+    <input type="number" id="weight" placeholder="e.g. 120" />
 
     <label for="stage">Production Stage</label>
     <select id="stage">
@@ -91,16 +96,16 @@
 
     <h2>Available Ingredients (lbs per day)</h2>
 
-    <label>Corn</label>
-    <input type="number" id="corn" value="10" />
+    <label>Grain Mix</label>
+    <input type="number" id="grain" value="2" />
 
-    <label>Soybean Meal</label>
-    <input type="number" id="soy" value="5" />
+    <label>Alfalfa Hay</label>
+    <input type="number" id="alfalfa" value="3" />
 
-    <label>Hay</label>
-    <input type="number" id="hay" value="15" />
+    <label>Grass Hay</label>
+    <input type="number" id="grassHay" value="2" />
 
-    <button onclick="calculateFeed()">Calculate Feed Blend</button>
+    <button onclick="calculateGoatFeed()">Calculate Feed Blend</button>
 
     <div class="results" id="results"></div>
 
@@ -108,26 +113,26 @@
   </div>
 
   <script>
-    function calculateFeed() {
+    function calculateGoatFeed() {
       const weight = parseFloat(document.getElementById('weight').value);
       const stage = document.getElementById('stage').value;
-      const corn = parseFloat(document.getElementById('corn').value);
-      const soy = parseFloat(document.getElementById('soy').value);
-      const hay = parseFloat(document.getElementById('hay').value);
+      const grain = parseFloat(document.getElementById('grain').value);
+      const alfalfa = parseFloat(document.getElementById('alfalfa').value);
+      const grassHay = parseFloat(document.getElementById('grassHay').value);
 
       if (!weight || weight <= 0) {
         document.getElementById('results').innerHTML = '<strong>Please enter a valid weight.</strong>';
         return;
       }
 
-      // Simplified nutrient values
-      const protein = (corn * 0.09) + (soy * 0.48) + (hay * 0.12);
-      const totalFeed = corn + soy + hay;
+      // Simplified protein percentages
+      const protein = (grain * 0.16) + (alfalfa * 0.18) + (grassHay * 0.10);
+      const totalFeed = grain + alfalfa + grassHay;
 
       let proteinRequirement;
-      if (stage === 'maintenance') proteinRequirement = weight * 0.0007;
-      if (stage === 'growth') proteinRequirement = weight * 0.001;
-      if (stage === 'lactation') proteinRequirement = weight * 0.0013;
+      if (stage === 'maintenance') proteinRequirement = weight * 0.0008;
+      if (stage === 'growth') proteinRequirement = weight * 0.0011;
+      if (stage === 'lactation') proteinRequirement = weight * 0.0014;
 
       const meetsProtein = protein >= proteinRequirement;
 
