@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cattle Feed Blend Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #000000;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1, h2 {
+      color: #245346;
+    }
+    .container {
+      max-width: 800px;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin: auto;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    select, input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px;
+      width: 100%;
+      background: #235849;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #24483f;
+    }
+    .results {
+      margin-top: 30px;
+      padding: 15px;
+      background: #eef5f2;
+      border-radius: 5px;
+    }
+    .note {
+      font-size: 0.9em;
+      color: #555;
+      margin-top: 10px;
+    }
+    a {
+        padding-left: 10px;
+    }
+  </style>
+</head>
+<body>
+    <div class="navigation">
+        <a href="index.html">Home</a>
+        <a href="cattlefeed.html">Cattle Feed Calculator</a>
+    </div>
+  <div class="container">
+    <h1>Cattle Feed Blend Calculator</h1>
+    <p>This prototype estimates a basic daily feed blend for cattle. Values are simplified for educational use.</p>
+
+    <label for="cattleType">Cattle Type</label>
+    <select id="cattleType">
+      <option value="beef">Beef Cattle</option>
+      <option value="dairy">Dairy Cattle</option>
+    </select>
+
+    <label for="weight">Average Weight (lbs)</label>
+    <input type="number" id="weight" placeholder="e.g. 1200" />
+
+    <label for="stage">Production Stage</label>
+    <select id="stage">
+      <option value="maintenance">Maintenance</option>
+      <option value="growth">Growth</option>
+      <option value="lactation">Lactation</option>
+    </select>
+
+    <h2>Available Ingredients (lbs per day)</h2>
+
+    <label>Corn</label>
+    <input type="number" id="corn" value="10" />
+
+    <label>Soybean Meal</label>
+    <input type="number" id="soy" value="5" />
+
+    <label>Hay</label>
+    <input type="number" id="hay" value="15" />
+
+    <button onclick="calculateFeed()">Calculate Feed Blend</button>
+
+    <div class="results" id="results"></div>
+
+    <p class="note">Disclaimer: This tool provides estimates only and is not a replacement for a professional nutritionist.</p>
+  </div>
+
+  <script>
+    function calculateFeed() {
+      const weight = parseFloat(document.getElementById('weight').value);
+      const stage = document.getElementById('stage').value;
+      const corn = parseFloat(document.getElementById('corn').value);
+      const soy = parseFloat(document.getElementById('soy').value);
+      const hay = parseFloat(document.getElementById('hay').value);
+
+      if (!weight || weight <= 0) {
+        document.getElementById('results').innerHTML = '<strong>Please enter a valid weight.</strong>';
+        return;
+      }
+
+      // Simplified nutrient values
+      const protein = (corn * 0.09) + (soy * 0.48) + (hay * 0.12);
+      const totalFeed = corn + soy + hay;
+
+      let proteinRequirement;
+      if (stage === 'maintenance') proteinRequirement = weight * 0.0007;
+      if (stage === 'growth') proteinRequirement = weight * 0.001;
+      if (stage === 'lactation') proteinRequirement = weight * 0.0013;
+
+      const meetsProtein = protein >= proteinRequirement;
+
+      document.getElementById('results').innerHTML = `
+        <h2>Results</h2>
+        <p><strong>Total Feed:</strong> ${totalFeed.toFixed(1)} lbs/day</p>
+        <p><strong>Estimated Protein Supplied:</strong> ${protein.toFixed(2)} lbs/day</p>
+        <p><strong>Estimated Protein Required:</strong> ${proteinRequirement.toFixed(2)} lbs/day</p>
+        <p><strong>Status:</strong> ${meetsProtein ? 'Protein needs met ✔️' : 'Protein needs NOT met ⚠️'}</p>
+      `;
+    }
+  </script>
+</body>
+</html>
