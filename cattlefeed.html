@@ -1,151 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cattle Feed Blend Calculator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #000000;
-      padding: 20px;
-      line-height: 1.6;
-    }
-    h1, h2 {
-      color: #245346;
-    }
-    .container {
-      max-width: 800px;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      margin: auto;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-    }
-    select, input {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-    }
-    button {
-      margin-top: 20px;
-      padding: 12px;
-      width: 100%;
-      background: #235849;
-      color: white;
-      border: none;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #24483f;
-    }
-    .results {
-      margin-top: 30px;
-      padding: 15px;
-      background: #eef5f2;
-      border-radius: 5px;
-    }
-    .note {
-      font-size: 0.9em;
-      color: #555;
-      margin-top: 10px;
-    }
-    a {
-        padding-left: 10px;
-    }
-    .nav-link {
-      display: inline-block;
-      margin-bottom: 15px;
-      text-decoration: none;
-      color: #24483f;
-      font-weight: bold;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cattle Feed Calculator (Improved)</title>
+<style>
+body{font-family:Arial,sans-serif;background:#000000;padding:20px}
+.container{max-width:800px;margin:auto;background:#fff;padding:20px;border-radius:10px}
+label{display:block;margin-top:12px;font-weight:bold}
+input,select{width:100%;padding:8px;margin-top:4px}
+button{margin-top:20px;width:100%;padding:12px;border:none;border-radius:6px}
+.results{margin-top:20px;background:#eee;padding:15px;border-radius:6px}
+a{text-decoration:none;font-weight:bold}
+.small{font-size:13px;color:#555}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+</style>
 </head>
 <body>
-    <div class="navigation">
-        <a href="index.html">Home</a>
-        <a href="cattlefeed.html">Cattle Feed Calculator</a>
-        <a href="goatfeed.html">Goat Feed Calculator</a>
-    </div>
-  <div class="container">
-    <a class="nav-link" href="index.html">← Back to Home</a>
-    <h1>Cattle Feed Blend Calculator</h1>
-    <p>This prototype estimates a basic daily feed blend for cattle. Values are simplified for educational use.</p>
+<div class="container">
+<a href="index.html">← Back Home</a>
+<h1>Cattle Feed Calculator</h1>
+<p class="small">Estimates dry matter intake and crude protein needs based on body weight and production stage.</p>
 
-    <label for="cattleType">Cattle Type</label>
-    <select id="cattleType">
-      <option value="beef">Beef Cattle</option>
-      <option value="dairy">Dairy Cattle</option>
-    </select>
+<label>Animal Weight (lbs)</label>
+<input id="weight" type="number" placeholder="e.g. 1200" />
 
-    <label for="weight">Average Weight (lbs)</label>
-    <input type="number" id="weight" placeholder="e.g. 1200" />
+<label>Production Stage</label>
+<select id="stage">
+  <option value="maintenance">Maintenance (dry cow / mature steer)</option>
+  <option value="growing">Growing</option>
+  <option value="lactating">Lactating</option>
+</select>
 
-    <label for="stage">Production Stage</label>
-    <select id="stage">
-      <option value="maintenance">Maintenance</option>
-      <option value="growth">Growth</option>
-      <option value="lactation">Lactation</option>
-    </select>
+<div class="grid">
+<div>
+<label>Forage Offered (lbs as-fed/day)</label>
+<input id="forage" type="number" placeholder="e.g. 25" />
+</div>
+<div>
+<label>Forage Protein %</label>
+<input id="forageCP" type="number" placeholder="e.g. 10" />
+</div>
+</div>
 
-    <h2>Available Ingredients (lbs per day)</h2>
+<div class="grid">
+<div>
+<label>Grain / Supplement (lbs as-fed/day)</label>
+<input id="grain" type="number" value="0" />
+</div>
+<div>
+<label>Grain Protein %</label>
+<input id="grainCP" type="number" value="16" />
+</div>
+</div>
 
-    <label>Corn</label>
-    <input type="number" id="corn" value="10" />
+<button onclick="calculateCattle()">Calculate Ration</button>
 
-    <label>Soybean Meal</label>
-    <input type="number" id="soy" value="5" />
+<div id="results" class="results"></div>
+</div>
 
-    <label>Hay</label>
-    <input type="number" id="hay" value="15" />
+<script>
+function calculateCattle(){
+  const lbs = parseFloat(weight.value);
+  const stage = document.getElementById('stage').value;
+  const forage = parseFloat(document.getElementById('forage').value) || 0;
+  const forageCP = parseFloat(document.getElementById('forageCP').value) || 0;
+  const grain = parseFloat(document.getElementById('grain').value) || 0;
+  const grainCP = parseFloat(document.getElementById('grainCP').value) || 0;
 
-    <button onclick="calculateFeed()">Calculate Feed Blend</button>
+  if(!lbs || lbs<=0){
+    results.innerHTML='Please enter a valid animal weight.';
+    return;
+  }
 
-    <div class="results" id="results"></div>
+  // Dry matter intake estimates (% of body weight)
+  let dmiPercent = 0.025;
+  if(stage==='growing') dmiPercent = 0.028;
+  if(stage==='lactating') dmiPercent = 0.032;
 
-    <p class="note">Disclaimer: This tool provides estimates only and is not a replacement for a professional nutritionist.</p>
-  </div>
+  const DMIrequired = lbs * dmiPercent;
 
-  <script>
-    function calculateFeed() {
-      const weight = parseFloat(document.getElementById('weight').value);
-      const stage = document.getElementById('stage').value;
-      const corn = parseFloat(document.getElementById('corn').value);
-      const soy = parseFloat(document.getElementById('soy').value);
-      const hay = parseFloat(document.getElementById('hay').value);
+  // Crude protein targets
+  let cpTarget = 0.10;
+  if(stage==='growing') cpTarget = 0.13;
+  if(stage==='lactating') cpTarget = 0.16;
 
-      if (!weight || weight <= 0) {
-        document.getElementById('results').innerHTML = '<strong>Please enter a valid weight.</strong>';
-        return;
-      }
+  const CPrequired = DMIrequired * cpTarget;
 
-      // Simplified nutrient values
-      const protein = (corn * 0.09) + (soy * 0.48) + (hay * 0.12);
-      const totalFeed = corn + soy + hay;
+  // Assume feeds are ~90% dry matter
+  const forageDM = forage * 0.9;
+  const grainDM = grain * 0.9;
+  const totalDM = forageDM + grainDM;
 
-      let proteinRequirement;
-      if (stage === 'maintenance') proteinRequirement = weight * 0.0007;
-      if (stage === 'growth') proteinRequirement = weight * 0.001;
-      if (stage === 'lactation') proteinRequirement = weight * 0.0013;
+  const forageProtein = forageDM * (forageCP/100);
+  const grainProtein = grainDM * (grainCP/100);
+  const CPsupplied = forageProtein + grainProtein;
 
-      const meetsProtein = protein >= proteinRequirement;
+  const intakeOK = totalDM >= DMIrequired * 0.95;
+  const proteinOK = CPsupplied >= CPrequired * 0.95;
 
-      document.getElementById('results').innerHTML = `
-        <h2>Results</h2>
-        <p><strong>Total Feed:</strong> ${totalFeed.toFixed(1)} lbs/day</p>
-        <p><strong>Estimated Protein Supplied:</strong> ${protein.toFixed(2)} lbs/day</p>
-        <p><strong>Estimated Protein Required:</strong> ${proteinRequirement.toFixed(2)} lbs/day</p>
-        <p><strong>Status:</strong> ${meetsProtein ? 'Protein needs met ✔️' : 'Protein needs NOT met ⚠️'}</p>
-      `;
-    }
-  </script>
+  results.innerHTML = `
+  <strong>Results</strong><br><br>
+  Estimated dry matter needed: ${DMIrequired.toFixed(1)} lbs/day<br>
+  Dry matter supplied: ${totalDM.toFixed(1)} lbs/day<br><br>
+
+  Protein required: ${CPrequired.toFixed(2)} lbs/day<br>
+  Protein supplied: ${CPsupplied.toFixed(2)} lbs/day<br><br>
+
+  ${intakeOK ? '✔ Intake meets requirement' : '⚠ Increase total feed'}<br>
+  ${proteinOK ? '✔ Protein adequate' : '⚠ Increase protein or supplement'}<br><br>
+
+  <span class="small">Tip: This is an estimate. Adjust based on body condition score and production performance.</span>
+  `;
+}
+</script>
 </body>
 </html>

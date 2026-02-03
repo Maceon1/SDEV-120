@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chicken Feed</title>
+<style>body{font-family:Arial;background:#f4f7f5;padding:20px}.container{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:8px}label{display:block;margin-top:12px}input,select{width:100%;padding:8px}button{margin-top:20px;width:100%;padding:10px}</style></head>
+<body><div class="container"><a href="index.html">← Back Home</a><h1>Chicken Feed Calculator</h1>
+<label>Bird Type</label><select id="t"><option>Layer</option><option>Broiler</option></select>
+<label>Feed (lbs/day)</label><input id="f" value="0.25" />
+<button onclick="c()">Calculate</button><div id="r"></div></div>
+<script>
+function c(){
+  const type=document.getElementById('t').value;
+  const feed=parseFloat(document.getElementById('f').value);
+
+  if(!feed||feed<=0){
+    r.innerHTML='Enter a valid feed amount.';
+    return;
+  }
+
+  // Typical crude protein targets
+  const proteinPercent = type==='Broiler'?0.20:0.16; // broilers need more protein
+
+  // Assume average bird eats ~0.25 lbs/day
+  const recommendedIntake = 0.25;
+
+  const proteinSupplied = feed * proteinPercent;
+  const proteinRequired = recommendedIntake * proteinPercent;
+
+  const intakeOK = feed >= recommendedIntake;
+  const proteinOK = proteinSupplied >= proteinRequired;
+
+  r.innerHTML = `
+    <strong>Results</strong><br>
+    Feed provided: ${feed.toFixed(2)} lbs/day<br>
+    Recommended intake: ${recommendedIntake.toFixed(2)} lbs/day<br>
+    Protein supplied: ${proteinSupplied.toFixed(2)} lbs/day<br>
+    <br>
+    ${intakeOK?'✔ Intake OK':'⚠ Increase feed amount'}<br>
+    ${proteinOK?'✔ Protein OK':'⚠ Increase protein'}
+  `;
+}
+</script></body></html>

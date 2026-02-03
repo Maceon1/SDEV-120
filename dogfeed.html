@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dog Feed Calculator </title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f7f5;padding:20px}
+.container{max-width:700px;margin:auto;background:#fff;padding:20px;border-radius:8px}
+label{display:block;margin-top:12px;font-weight:bold}
+input,select{width:100%;padding:8px;margin-top:4px}
+button{margin-top:20px;width:100%;padding:12px;border:none;border-radius:6px}
+.results{margin-top:20px;background:#eee;padding:15px;border-radius:6px}
+a{text-decoration:none;font-weight:bold}
+.small{font-size:13px;color:#555}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html">← Back Home</a>
+<h1>Dog Feed Calculator</h1>
+<p class="small">Estimates daily calories and kibble amount using veterinary RER/MER formulas.</p>
+
+<label>Dog Weight (lbs)</label>
+<input id="weight" type="number" placeholder="e.g. 45" />
+
+<label>Activity Level</label>
+<select id="activity">
+  <option value="1.4">Low (senior / couch potato)</option>
+  <option value="1.6" selected>Normal adult</option>
+  <option value="2.0">High (very active / working)</option>
+</select>
+
+<label>Body Condition</label>
+<select id="condition">
+  <option value="0.9">Overweight</option>
+  <option value="1" selected>Ideal</option>
+  <option value="1.1">Underweight</option>
+</select>
+
+<label>Kibble Calories (kcal per cup)</label>
+<input id="kcal" type="number" value="350" />
+
+<label>Treat Calories per Day (optional)</label>
+<input id="treats" type="number" value="0" />
+
+<button onclick="calculateDog()">Calculate Feeding Amount</button>
+
+<div id="results" class="results"></div>
+</div>
+
+<script>
+function calculateDog(){
+  const lbs = parseFloat(document.getElementById('weight').value);
+  const activity = parseFloat(document.getElementById('activity').value);
+  const condition = parseFloat(document.getElementById('condition').value);
+  const kcalPerCup = parseFloat(document.getElementById('kcal').value);
+  const treatCalories = parseFloat(document.getElementById('treats').value) || 0;
+
+  if(!lbs || lbs<=0){
+    results.innerHTML = 'Please enter a valid weight.';
+    return;
+  }
+
+  // Convert lbs to kg
+  const kg = lbs / 2.205;
+
+  // Resting Energy Requirement
+  const RER = 70 * Math.pow(kg, 0.75);
+
+  // Maintenance Energy Requirement with modifiers
+  let MER = RER * activity * condition;
+
+  // Subtract treat calories
+  MER = MER - treatCalories;
+  if(MER < 0) MER = 0;
+
+  // Cups of kibble needed
+  const cups = MER / kcalPerCup;
+
+  results.innerHTML = `
+    <strong>Results</strong><br><br>
+    Weight: ${lbs.toFixed(1)} lbs<br>
+    Estimated daily calories needed: ${MER.toFixed(0)} kcal<br>
+    Kibble calories: ${kcalPerCup} kcal/cup<br>
+    Treat calories accounted for: ${treatCalories.toFixed(0)} kcal<br><br>
+    <strong>Suggested kibble amount:</strong> ${cups.toFixed(2)} cups per day<br><br>
+    <span class="small">Tip: Split this into 2 meals. Re-evaluate every 2–3 weeks based on body condition.</span>
+  `;
+}
+</script>
+</body>
+</html>

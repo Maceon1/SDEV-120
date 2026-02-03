@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cat Feed Calculator</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f7f5;padding:20px}
+.container{max-width:700px;margin:auto;background:#fff;padding:20px;border-radius:8px}
+label{display:block;margin-top:12px;font-weight:bold}
+input,select{width:100%;padding:8px;margin-top:4px}
+button{margin-top:20px;width:100%;padding:12px;border:none;border-radius:6px}
+.results{margin-top:20px;background:#eee;padding:15px;border-radius:6px}
+a{text-decoration:none;font-weight:bold}
+.small{font-size:13px;color:#555}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html">← Back Home</a>
+<h1>Cat Feed Calculator</h1>
+<p class="small">Uses veterinary RER/MER formulas with lifestyle + body condition adjustments.</p>
+
+<label>Cat Weight (lbs)</label>
+<input id="weight" type="number" placeholder="e.g. 10" />
+
+<label>Lifestyle</label>
+<select id="lifestyle">
+  <option value="1.2">Indoor / Low activity</option>
+  <option value="1.4" selected>Normal adult</option>
+  <option value="1.6">Outdoor / Very active</option>
+</select>
+
+<label>Body Condition</label>
+<select id="condition">
+  <option value="0.85">Overweight</option>
+  <option value="1" selected>Ideal</option>
+  <option value="1.1">Underweight</option>
+</select>
+
+<label>Food Calories (kcal per cup or can)</label>
+<input id="kcal" type="number" value="180" />
+
+<label>Treat Calories per Day (optional)</label>
+<input id="treats" type="number" value="0" />
+
+<button onclick="calculateCat()">Calculate Feeding Amount</button>
+
+<div id="results" class="results"></div>
+</div>
+
+<script>
+function calculateCat(){
+  const lbs = parseFloat(document.getElementById('weight').value);
+  const lifestyle = parseFloat(document.getElementById('lifestyle').value);
+  const condition = parseFloat(document.getElementById('condition').value);
+  const kcalUnit = parseFloat(document.getElementById('kcal').value);
+  const treatCalories = parseFloat(document.getElementById('treats').value) || 0;
+
+  if(!lbs || lbs<=0){
+    results.innerHTML = 'Please enter a valid weight.';
+    return;
+  }
+
+  // Convert lbs to kg
+  const kg = lbs / 2.205;
+
+  // Resting Energy Requirement for cats
+  const RER = 70 * Math.pow(kg, 0.75);
+
+  // Maintenance Energy Requirement with modifiers
+  let MER = RER * lifestyle * condition;
+
+  // Subtract treat calories
+  MER = MER - treatCalories;
+  if(MER < 0) MER = 0;
+
+  // Units of food needed (cups or cans depending on user input)
+  const units = MER / kcalUnit;
+
+  results.innerHTML = `
+    <strong>Results</strong><br><br>
+    Weight: ${lbs.toFixed(1)} lbs<br>
+    Estimated daily calories needed: ${MER.toFixed(0)} kcal<br>
+    Food calories: ${kcalUnit} kcal per unit<br>
+    Treat calories accounted for: ${treatCalories.toFixed(0)} kcal<br><br>
+    <strong>Suggested feeding amount:</strong> ${units.toFixed(2)} units per day<br><br>
+    <span class="small">Tip: Split into 2–3 meals. Adjust every 2–3 weeks based on body condition score.</span>
+  `;
+}
+</script>
+</body>
+</html>

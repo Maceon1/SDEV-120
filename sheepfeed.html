@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sheep Feed Calculator</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f7f5;padding:20px}
+.container{max-width:800px;margin:auto;background:#fff;padding:20px;border-radius:8px}
+label{display:block;margin-top:15px;font-weight:bold}
+input,select{width:100%;padding:8px;margin-top:5px}
+button{margin-top:20px;width:100%;padding:12px;background:#777;color:#fff;border:none;border-radius:5px}
+.results{margin-top:20px;background:#eee;padding:15px;border-radius:5px}
+a{text-decoration:none;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html">← Back Home</a>
+<h1>Sheep Feed Calculator</h1>
+
+<label>Weight (lbs)</label>
+<input id="weight" type="number" />
+
+<label>Stage</label>
+<select id="stage">
+<option value="maintenance">Maintenance</option>
+<option value="growth">Growth</option>
+<option value="lactation">Lactation</option>
+</select>
+
+<label>Grain (lbs)</label>
+<input id="grain" value="1" />
+
+<label>Hay (lbs)</label>
+<input id="hay" value="3" />
+
+<button onclick="calc()">Calculate</button>
+<div id="results" class="results"></div>
+</div>
+
+<script>
+function calc(){
+const w=parseFloat(weight.value);
+const g=parseFloat(grain.value);
+const h=parseFloat(hay.value);
+if(!w)return results.innerHTML='Enter weight';
+const protein=g*0.16+h*0.1;
+let req=w*(stage.value==='lactation'?0.0013:stage.value==='growth'?0.001:0.0007);
+results.innerHTML=`Protein supplied: ${protein.toFixed(2)} lbs<br>Protein required: ${req.toFixed(2)} lbs`;
+}
+</script>
+</body>
+</html>
